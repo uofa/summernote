@@ -83,7 +83,7 @@ define([
           offset += list.sum(list.tail(prevTextNodes), dom.nodeLength);
           isCollapseToStart = !prevContainer;
         } else {
-          node = container.childNodes[offset] || container;
+          node = (typeof container !== 'undefined') ? container.childNodes[offset] : container;
           if (dom.isText(node)) {
             return textRangeInfo(node, 0);
           }
@@ -102,9 +102,11 @@ define([
       var textRange = document.body.createTextRange();
       var info = textRangeInfo(point.node, point.offset);
   
-      textRange.moveToElementText(info.node);
-      textRange.collapse(info.collapseToStart);
-      textRange.moveStart('character', info.offset);
+      if (typeof info !== 'undefined' && info.node !== null) {
+          textRange.moveToElementText(info.node);
+          textRange.moveStart('character', info.offset);
+          textRange.collapse(info.collapseToStart);
+      }
       return textRange;
     };
     

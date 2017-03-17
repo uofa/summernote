@@ -1889,7 +1889,7 @@
 
   var dropdown = renderer.create('<div class="dropdown-menu">', function ($node, options) {
     var markup = $.isArray(options.items) ? options.items.map(function (item) {
-      var value = (typeof item === 'string') ? item : (item.value || '');
+      var value = (typeof item === 'string') ? item : ((typeof item !== 'undefined') ? item.value : '');
       var content = options.template ? options.template(item) : item;
       return '<li><a href="#" data-value="' + value + '">' + content + '</a></li>';
     }).join('') : options.items;
@@ -2372,7 +2372,7 @@
           offset += list.sum(list.tail(prevTextNodes), dom.nodeLength);
           isCollapseToStart = !prevContainer;
         } else {
-          node = container.childNodes[offset] || container;
+          node = (typeof container !== 'undefined') ? container.childNodes[offset] : container;
           if (dom.isText(node)) {
             return textRangeInfo(node, 0);
           }
@@ -2390,10 +2390,12 @@
   
       var textRange = document.body.createTextRange();
       var info = textRangeInfo(point.node, point.offset);
-  
-      textRange.moveToElementText(info.node);
-      textRange.collapse(info.collapseToStart);
-      textRange.moveStart('character', info.offset);
+
+      if (typeof info !== 'undefined' && info.node !== null) {
+          textRange.moveToElementText(info.node);
+          textRange.moveStart('character', info.offset);
+          textRange.collapse(info.collapseToStart);
+      }
       return textRange;
     };
     
@@ -4026,6 +4028,16 @@
     context.memo('help.tab', lang.help.tab);
 
     /**
+     * handle space key
+     */
+    this.space = function () {
+      var rng = this.createRange();
+      beforeCommand();
+      typing.insertTab(rng, 1);
+      afterCommand();
+    };
+
+    /**
      * handle shift+tab key
      */
     this.untab = function () {
@@ -5198,10 +5210,10 @@
                 item = { tag: item, title: (lang.style.hasOwnProperty(item) ? lang.style[item] : item) };
               }
 
-              var tag = item.tag;
-              var title = item.title;
-              var style = item.style ? ' style="' + item.style + '" ' : '';
-              var className = item.className ? ' class="' + item.className + '"' : '';
+              var tag = (typeof item !== 'undefined') ? item.tag : '';
+              var title = (typeof item !== 'undefined') ? item.title : ''
+              var style = (typeof item !== 'undefined') ? (item.style ? ' style="' + item.style + '" ' : '') : '';
+              var className = (typeof item !== 'undefined') ? (item.className ? ' class="' + item.className + '"' : '') : '';
 
               return '<' + tag + style + className + '>' + title + '</' + tag +  '>';
             },
@@ -5690,8 +5702,8 @@
     this.build = function ($container, groups) {
       for (var groupIdx = 0, groupLen = groups.length; groupIdx < groupLen; groupIdx++) {
         var group = groups[groupIdx];
-        var groupName = group[0];
-        var buttons = group[1];
+        var groupName = (typeof group !== 'undefined') ? group[0] : '';
+        var buttons = (typeof group !== 'undefined') ? group[1] : '';
 
         var $group = ui.buttonGroup({
           className: 'note-' + groupName
@@ -6945,6 +6957,7 @@
           'CTRL+Z': 'undo',
           'CTRL+Y': 'redo',
           'TAB': 'tab',
+          'SPACE': 'space',
           'SHIFT+TAB': 'untab',
           'CTRL+B': 'bold',
           'CTRL+I': 'italic',
@@ -6975,6 +6988,7 @@
           'CMD+Z': 'undo',
           'CMD+SHIFT+Z': 'redo',
           'TAB': 'tab',
+          'SPACE': 'space',
           'SHIFT+TAB': 'untab',
           'CMD+B': 'bold',
           'CMD+I': 'italic',

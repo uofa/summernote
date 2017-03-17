@@ -282,6 +282,16 @@ define([
       }
     };
     context.memo('help.tab', lang.help.tab);
+    
+    /**
+     * handle space key
+     */
+    this.space = function () {
+      var rng = this.createRange();
+      beforeCommand();
+      typing.insertTab(rng, 1);
+      afterCommand();
+    };    
 
     /**
      * handle shift+tab key

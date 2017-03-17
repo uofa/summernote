@@ -72,10 +72,10 @@ define([
                 item = { tag: item, title: (lang.style.hasOwnProperty(item) ? lang.style[item] : item) };
               }
 
-              var tag = item.tag;
-              var title = item.title;
-              var style = item.style ? ' style="' + item.style + '" ' : '';
-              var className = item.className ? ' class="' + item.className + '"' : '';
+              var tag = (typeof item !== 'undefined') ? item.tag : '';
+              var title = (typeof item !== 'undefined') ? item.title : ''
+              var style = (typeof item !== 'undefined') ? (item.style ? ' style="' + item.style + '" ' : '') : '';
+              var className = (typeof item !== 'undefined') ? (item.className ? ' class="' + item.className + '"' : '') : '';
 
               return '<' + tag + style + className + '>' + title + '</' + tag +  '>';
             },
@@ -564,8 +564,8 @@ define([
     this.build = function ($container, groups) {
       for (var groupIdx = 0, groupLen = groups.length; groupIdx < groupLen; groupIdx++) {
         var group = groups[groupIdx];
-        var groupName = group[0];
-        var buttons = group[1];
+        var groupName = (typeof group !== 'undefined') ? group[0] : '';
+        var buttons = (typeof group !== 'undefined') ? group[1] : '';
 
         var $group = ui.buttonGroup({
           className: 'note-' + groupName

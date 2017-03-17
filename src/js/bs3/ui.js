@@ -34,7 +34,7 @@ define([
 
   var dropdown = renderer.create('<div class="dropdown-menu">', function ($node, options) {
     var markup = $.isArray(options.items) ? options.items.map(function (item) {
-      var value = (typeof item === 'string') ? item : (item.value || '');
+      var value = (typeof item === 'string') ? item : ((typeof item !== 'undefined') ? item.value : '');
       var content = options.template ? options.template(item) : item;
       return '<li><a href="#" data-value="' + value + '">' + content + '</a></li>';
     }).join('') : options.items;
